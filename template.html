@@ -136,6 +136,18 @@ footer a{color:inherit}
 .ctl{margin-bottom:14px}
 .maphint{margin:0 0 8px;color:var(--muted);font-size:15px}
 footer .meta{margin-top:12px}
+.gu-pick{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;padding:6px 14px;border:1.5px solid var(--brand);border-radius:12px;
+  background:var(--btn-bg);color:var(--ink);font:inherit;font-size:16px;text-align:left;cursor:pointer}
+.gu-pick b{font-weight:700}
+.gu-pick .chg{margin-left:auto;font-size:14px;font-weight:700;color:var(--brand)}
+.maphint .short{display:none}
+@media (max-width:640px){
+  .gu-grid{gap:6px}
+  .gu{min-height:38px;font-size:15px;border-radius:9px}
+  .maphint{font-size:13px;margin-bottom:6px}
+  .maphint .long{display:none}.maphint .short{display:inline}
+  #map{height:clamp(300px,46vh,400px)}
+}
 </style>
 </head>
 <body>
@@ -154,13 +166,16 @@ footer .meta{margin-top:12px}
 
 <section id="panel" hidden aria-live="polite">
   <div class="ctl gu-grid" id="gu" hidden></div>
+  <div class="ctl" id="gupicked" hidden></div>
   <div class="ctl search" id="searchbox" hidden>
     <label for="q" class="sr-only">동네나 장소 이름</label>
     <input id="q" type="search" placeholder="예: 장전동, 보건소" autocomplete="off">
   </div>
   <div class="filters" id="filters" role="group" aria-label="장소 종류로 거르기"></div>
-  <p class="maphint">지도를 손가락으로 움직이거나 확대해서 원하는 곳을 찾아보세요. 말풍선을 누르면 상세 정보와 길찾기가 나와요.</p>
+  <div id="mapwrap" hidden>
+  <p class="maphint"><span class="long">지도를 손가락으로 움직이거나 확대해서 원하는 곳을 찾아보세요. 말풍선을 누르면 상세 정보와 길찾기가 나와요.</span><span class="short">지도를 확대하고 말풍선을 눌러 보세요.</span></p>
   <div class="mapbox"><div id="map" role="region" aria-label="수거함 지도"></div><div class="mapmsg" id="mapmsg">지도를 불러오는 중이에요…</div></div>
+  </div>
   <p id="status"></p>
   <p class="hint" id="rhint" hidden>🏘️ 아파트·경로당 수거함은 단지나 시설 안(학교 보건실 포함)에 있어서, 그곳 주민이나 이용자만 쓸 수 있을 수 있어요.</p>
   <ul id="list"></ul>
@@ -322,7 +337,15 @@ function item(r, fromLabel){
 function render(opts={}){
   document.querySelectorAll(".mode").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.m===state.mode)));
   $("gu").innerHTML = GU.map((g,i)=>`<button class="gu" type="button" data-i="${i}" aria-pressed="${state.gu===i}">${g}</button>`).join("");
+  const picked = state.mode==="gu" && state.gu>=0 && !state.guOpen;
+  $("gu").hidden = !(state.mode==="gu" && !picked);
+  $("gupicked").hidden = !picked;
+  $("gupicked").innerHTML = picked ? `<button class="gu-pick" type="button"><span aria-hidden="true">🗺️</span><b>${GU[state.gu]}</b><span class="chg">다른 구·군 고르기</span></button>` : "";
   const sc = scoped();
+  const active = (state.mode==="gu" && state.gu>=0) || (state.mode==="search" && !!state.q.trim()) || (state.mode==="near" && !!state.me);
+  const appearing = active && $("mapwrap").hidden;
+  $("mapwrap").hidden = !active;
+  if(appearing && hasMap) map.relayout();
   renderFilters(sc);
   const rows = state.type==="all" ? sc : sc.filter(r=>r.t===state.type);
   if(hasMap){ overlay.setMap(null); clusterer.clear(); clusterer.addMarkers(rows.map(r=>markers[r.i])); }
@@ -377,8 +400,8 @@ function locate(){
 document.querySelector(".modes").addEventListener("click",e=>{
   const b=e.target.closest(".mode"); if(!b) return;
   const m=b.dataset.m, first=$("panel").hidden;
-  state.mode=m; state.gu=-1; state.q=""; state.type="all"; $("q").value="";
-  $("gu").hidden = m!=="gu"; $("searchbox").hidden = m!=="search";
+  state.mode=m; state.gu=-1; state.guOpen=false; state.q=""; state.type="all"; $("q").value="";
+  $("searchbox").hidden = m!=="search";
   $("panel").hidden=false;
   if(first){ $("panel").classList.remove("open"); void $("panel").offsetWidth; $("panel").classList.add("open"); }
   ensureMap();
@@ -389,9 +412,10 @@ document.querySelector(".modes").addEventListener("click",e=>{
 });
 $("gu").addEventListener("click",e=>{
   const b=e.target.closest(".gu"); if(!b) return;
-  state.gu=+b.dataset.i; state.type="all"; render({fit:true});
-  $("filters").scrollIntoView({behavior:smooth(),block:"start"});
+  state.gu=+b.dataset.i; state.guOpen=false; state.type="all"; render({fit:true});
+  $("panel").scrollIntoView({behavior:smooth(),block:"start"});
 });
+$("gupicked").addEventListener("click",()=>{ state.guOpen=true; render(); });
 let tm; $("q").addEventListener("input",e=>{ clearTimeout(tm); tm=setTimeout(()=>{ state.q=e.target.value; state.type="all"; render({fit:true}); placeSearch(state.q); },400); });
 $("filters").addEventListener("scroll",updFade,{passive:true});
 addEventListener("resize",updFade);
