@@ -12,6 +12,7 @@
   --bg:#FFFFFF;--surface:#F1F6F4;--ink:#13201C;--muted:#56665F;--line:#D3DFDA;
   --brand:#0B6B57;--brand-ink:#FFFFFF;--brand-weak:#E1F0EA;--signal:#C62F28;--warn-bg:#FFF4E5;--warn-ink:#7A4A00;
   --pinP:#0B6B57;--pinG:#2457A6;--pinO:#6B7772;--pinR:#C27A00;
+  --btn-bg:#EEF6F3;--btn-line:#BFD6CE;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
@@ -19,6 +20,7 @@
     --bg:#0D1412;--surface:#15201D;--ink:#E6EFEB;--muted:#9BAEA7;--line:#2A3A35;
     --brand:#47C1A0;--brand-ink:#0D1412;--brand-weak:#173029;--signal:#F2685D;--warn-bg:#2E2414;--warn-ink:#F3C987;
     --pinP:#47C1A0;--pinG:#7EA6F0;--pinO:#A9B6B1;--pinR:#F0A93A;
+    --btn-bg:#1A2E29;--btn-line:#38574F;
     color-scheme:dark;
   }
 }
@@ -26,6 +28,7 @@
   --bg:#0D1412;--surface:#15201D;--ink:#E6EFEB;--muted:#9BAEA7;--line:#2A3A35;
   --brand:#47C1A0;--brand-ink:#0D1412;--brand-weak:#173029;--signal:#F2685D;--warn-bg:#2E2414;--warn-ink:#F3C987;
   --pinP:#47C1A0;--pinG:#7EA6F0;--pinO:#A9B6B1;--pinR:#F0A93A;
+  --btn-bg:#1A2E29;--btn-line:#38574F;
   color-scheme:dark;
 }
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -43,21 +46,26 @@ header{margin-bottom:22px}
 h1{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:clamp(34px,9vw,46px);line-height:1.12;margin:0 0 14px;letter-spacing:-0.5px}
 h2{font-size:20px;font-weight:700;margin:0 0 12px}
 .gu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px}
-.gu{min-height:52px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;
-  font:inherit;font-size:17px;font-weight:500;cursor:pointer;padding:6px 2px}
+.gu{min-height:48px;border:1.5px solid var(--btn-line);background:var(--btn-bg);color:var(--ink);border-radius:10px;
+  font:inherit;font-size:16px;font-weight:500;cursor:pointer;padding:6px 2px}
 .gu[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink);font-weight:700}
 .search{margin-bottom:16px}
 .search input{width:100%;min-height:52px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);
   font:inherit;font-size:17px;padding:10px 14px}
-.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.chip{--c:var(--brand);display:inline-flex;align-items:center;gap:8px;min-height:48px;border:1.5px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);
-  font:inherit;font-size:16px;padding:5px 14px 5px 6px;cursor:pointer}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+@media (max-width:640px){
+  .filters{flex-wrap:nowrap;overflow-x:auto;margin-right:-20px;padding:0 20px 2px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .filters::-webkit-scrollbar{display:none}
+  .filters.fade{-webkit-mask-image:linear-gradient(to right,#000 78%,transparent);mask-image:linear-gradient(to right,#000 78%,transparent)}
+}
+.chip{--c:var(--brand);flex:none;display:inline-flex;align-items:center;gap:5px;min-height:40px;border:1.5px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);
+  font:inherit;font-size:14px;white-space:nowrap;padding:3px 11px 3px 4px;cursor:pointer}
 .chip[data-t="P"]{--c:var(--pinP)}.chip[data-t="G"]{--c:var(--pinG)}.chip[data-t="O"]{--c:var(--pinO)}.chip[data-t="R"]{--c:var(--pinR)}
-.chip .ico{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;
-  border:2.5px solid var(--c);background:var(--bg);font-size:17px;line-height:1;flex:none}
+.chip .ico{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;
+  border:2px solid var(--c);background:var(--bg);font-size:14px;line-height:1;flex:none}
 .chip[aria-pressed="true"]{border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c);font-weight:700;background:var(--brand-weak);
   background:color-mix(in srgb,var(--c) 16%,var(--bg))}
-.chip .n{color:var(--muted);font-weight:400;font-size:15px}
+.chip .n{color:var(--muted);font-weight:400;font-size:12.5px}
 .dot{width:12px;height:12px;border-radius:50%;flex:none;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
 .dot.P{background:var(--pinP)}.dot.G{background:var(--pinG)}.dot.O{background:var(--pinO)}.dot.R{background:var(--pinR)}
 button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
@@ -81,6 +89,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 #status{font-weight:700;margin:6px 0 10px;min-height:1.6em}
 .hint{background:var(--warn-bg);color:var(--warn-ink);border-radius:10px;padding:10px 14px;font-size:15px;margin:0 0 12px}
 #list{list-style:none;margin:0;padding:0}
+#list .sep{margin:18px 0 0;padding:10px 0 6px;font-weight:700;color:var(--brand);border-top:2px solid var(--brand)}
 .item{border-top:1px solid var(--line);padding:16px 0}
 .item:last-child{border-bottom:1px solid var(--line)}
 .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -108,15 +117,18 @@ footer a{color:inherit}
 @media (max-width:360px){.gu-grid{grid-template-columns:repeat(3,1fr)}}
 
 .modes{display:grid;gap:10px;margin:0 0 18px}
-.mode{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:10px 16px;border:2px solid var(--line);border-radius:14px;
-  background:var(--bg);color:var(--ink);font:inherit;font-size:18px;font-weight:700;text-align:left;cursor:pointer}
-.mode .mi{display:inline-flex;align-items:center;justify-content:center;flex:none;width:42px;height:42px;border-radius:50%;background:var(--surface);font-size:22px;line-height:1}
+.modes{gap:8px}
+.mode{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:9px 40px 9px 12px;border:1.5px solid var(--btn-line);border-radius:14px;
+  background:var(--btn-bg);color:var(--ink);font:inherit;text-align:left;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.mode::after{content:"";position:absolute;right:16px;top:50%;width:9px;height:9px;margin-top:-5px;border-right:2.5px solid var(--muted);border-bottom:2.5px solid var(--muted);transform:rotate(-45deg)}
+.mode .mi{display:inline-flex;align-items:center;justify-content:center;flex:none;width:38px;height:38px;border-radius:50%;background:var(--bg);font-size:19px;line-height:1}
 .mode[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
 .mode[aria-pressed="true"] .mi{background:var(--bg)}
 .mtx{display:flex;flex-direction:column;gap:2px;line-height:1.35}
-.mt{font-size:18px;font-weight:700}
-.ms{font-size:14px;font-weight:400;color:var(--muted)}
+.mt{font-size:16px;font-weight:700}
+.ms{font-size:13px;font-weight:400;color:var(--muted)}
 .mode[aria-pressed="true"] .ms{color:var(--brand-ink);opacity:.85}
+.mode[aria-pressed="true"]::after{border-color:var(--brand-ink);transform:rotate(45deg);margin-top:-8px}
 #panel{margin-bottom:8px}
 #panel.open{animation:pop .28s ease-out}
 @keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -176,7 +188,7 @@ footer .meta{margin-top:12px}
 </footer>
 </div>
 
-<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=74326d0a04e16aaf4074d5d0d86b14aa&libraries=clusterer&autoload=false" onerror="window.__kakaoFail=true"></script>
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=74326d0a04e16aaf4074d5d0d86b14aa&libraries=clusterer,services&autoload=false" onerror="window.__kakaoFail=true"></script>
 <script>
 const DATA = __DATA__;
 const GU = DATA.gu, ROWS = DATA.rows.map((r,i)=>({i,gi:r[0],name:r[1],addr:r[2],pos:r[3],lng:r[4],lat:r[5],t:r[6]}));
@@ -185,6 +197,8 @@ const EMO = {P:"💊",G:"🏛️",O:"🏢",R:"🏘️"};
 const TAG = {P:"약국",G:"주민센터·보건소",O:"기타 장소",R:"아파트·경로당"};
 const NEAR_N = 30, LIMIT = 150;
 let state = {mode:null, gu:-1, q:"", type:"all", me:null};
+const NEAR_KM = 1.5;  // 검색 결과가 적을 때 함께 보여줄 주변 반경
+let geo = null;      // {q, lat, lng, label} : 이름이 맞는 수거함이 없을 때 카카오 장소검색으로 찾은 위치
 
 const $ = id => document.getElementById(id);
 const norm = s => s.replace(/\s+/g,"").toLowerCase();
@@ -242,24 +256,63 @@ function fitTo(rows){
   if(!hasMap) return; const K=kakao.maps;
   if(state.mode==="near"){ if(state.me){ map.setLevel(4); map.setCenter(new K.LatLng(state.me.lat,state.me.lng)); } return; }
   if(!rows.length) return;
+  if(rows.length===1){ map.setLevel(5); map.setCenter(new K.LatLng(rows[0].lat,rows[0].lng)); return; }
   const b=new K.LatLngBounds(); rows.forEach(r=>b.extend(new K.LatLng(r.lat,r.lng))); map.setBounds(b,40,40,40,40);
-  if(map.getLevel()<3) map.setLevel(3);
+  if(map.getLevel()<4) map.setLevel(4);
 }
 
 /* ---- 목록과 상태 ---- */
+function searchSet(){
+  const q = norm(state.q); const out = {matched:[], nearby:[], anchor:null, label:"", all:[]};
+  if(!q) return out;
+  out.matched = ROWS.filter(r=>norm(r.name+r.addr+r.pos+GU[r.gi]).includes(q));
+  if(out.matched.length && out.matched.length < 10){
+    const n=out.matched.length;
+    out.anchor = {lat:out.matched.reduce((s,r)=>s+r.lat,0)/n, lng:out.matched.reduce((s,r)=>s+r.lng,0)/n};
+    out.label = state.q.trim();
+  }else if(!out.matched.length && geo && geo.q===q){
+    out.anchor = {lat:geo.lat, lng:geo.lng}; out.label = geo.label;
+  }
+  if(out.anchor){
+    const seen = new Set(out.matched.map(r=>r.i));
+    out.nearby = ROWS.filter(r=>!seen.has(r.i)).map(r=>({r,d:km(out.anchor,r)})).filter(x=>x.d<=NEAR_KM)
+                     .sort((a,b)=>a.d-b.d).slice(0,40).map(x=>(x.r._a=x.d, x.r));
+  }
+  out.all = out.matched.concat(out.nearby);
+  return out;
+}
+function placeSearch(rawQ){
+  const q = norm(rawQ);
+  if(!q) return;
+  if(ROWS.some(r=>norm(r.name+r.addr+r.pos+GU[r.gi]).includes(q))) return;   // 이름이 맞는 수거함이 있으면 그걸 씀
+  if(q.length<2 || !kakaoReady || !kakao.maps.services){ state.geoTried=q; render(); return; }
+  const K=kakao.maps, ps=new K.services.Places();
+  const busan=new K.LatLngBounds(new K.LatLng(34.95,128.75), new K.LatLng(35.40,129.35));
+  ps.keywordSearch(rawQ.trim(), (res,st)=>{
+    if(norm(state.q)!==q) return;                       // 그 사이 검색어가 바뀜
+    if(st===K.services.Status.OK && res.length){
+      const p=res[0]; geo={q, lat:+p.y, lng:+p.x, label:p.place_name};
+    }else{ geo={q, lat:null, lng:null, label:"", none:true}; }
+    if(geo.none) geo=null;
+    state.geoTried=q; render({fit:true});
+  },{bounds:busan, size:5});
+}
 function scoped(){
   if(state.mode==="gu") return state.gu<0 ? [] : ROWS.filter(r=>r.gi===state.gu);
-  if(state.mode==="search"){ const q=norm(state.q); return q ? ROWS.filter(r=>norm(r.name+r.addr+r.pos+GU[r.gi]).includes(q)) : []; }
+  if(state.mode==="search") return searchSet().all;
   if(state.mode==="near") return state.me ? ROWS : [];
   return [];
 }
+function updFade(){ const f=$("filters"); f.classList.toggle("fade", f.scrollWidth - f.clientWidth - f.scrollLeft > 4); }
 function renderFilters(rows){
   const cnt = {all:rows.length,P:0,G:0,O:0,R:0}; rows.forEach(r=>cnt[r.t]++);
   $("filters").innerHTML = TYPES.map(([k,l])=>
     `<button class="chip" type="button" data-t="${k}" aria-pressed="${state.type===k}"><span class="ico" aria-hidden="true">${k==="all"?"📍":EMO[k]}</span>${l}<span class="n">${cnt[k]}곳</span></button>`).join("");
+  requestAnimationFrame(updFade);
 }
-function item(r){
-  const d = state.me ? `<span class="dist">${fmt(r._d)}</span> ` : "";
+function item(r, fromLabel){
+  const d = fromLabel ? `<span class="dist">‘${esc(fromLabel)}’에서 ${fmt(r._a)}</span> `
+          : (state.me && r._d!=null) ? `<span class="dist">${fmt(r._d)}</span> ` : "";
   const show = hasMap ? `<button class="btn" type="button" data-show="${r.i}">지도에서 보기</button>`
                       : `<a class="btn" href="${kmap(r)}" target="_blank" rel="noopener">지도에서 보기</a>`;
   return `<li class="item"><div class="top"><h3>${esc(r.name)}</h3><span class="tag ${r.t}">${EMO[r.t]} ${TAG[r.t]}</span></div>`+
@@ -274,7 +327,8 @@ function render(opts={}){
   const rows = state.type==="all" ? sc : sc.filter(r=>r.t===state.type);
   if(hasMap){ overlay.setMap(null); clusterer.clear(); clusterer.addMarkers(rows.map(r=>markers[r.i])); }
   let list = rows;
-  if(state.me){ rows.forEach(r=>r._d=km(state.me,r)); list = rows.slice().sort((a,b)=>a._d-b._d); }
+  if(state.me && state.mode!=="search"){ rows.forEach(r=>r._d=km(state.me,r)); list = rows.slice().sort((a,b)=>a._d-b._d); }
+  const ss = state.mode==="search" ? searchSet() : null;
   const cap = state.mode==="near" ? NEAR_N : LIMIT;
   const kind = state.type==="all" ? "수거함" : TYPES.find(t=>t[0]===state.type)[1];
   const q = state.q.trim();
@@ -284,13 +338,24 @@ function render(opts={}){
   }else if(state.mode==="gu"){
     msg = state.gu<0 ? "위에서 구·군을 골라 주세요." : (list.length ? `${GU[state.gu]} ${kind} ${list.length}곳` : `${GU[state.gu]}에는 이 종류로 등록된 곳이 없어요. 다른 종류를 눌러 보세요.`);
   }else if(state.mode==="search"){
-    msg = !q ? "동네 이름(예: 장전동)이나 장소 이름을 입력해 주세요."
-      : (sc.length===0 ? `‘${q}’에 맞는 곳이 없어요. 동 이름이나 장소 이름을 바꿔서 찾아보세요.`
-      : (list.length ? `‘${q}’ 검색 결과 ${kind} ${list.length}곳` : `‘${q}’ 검색 결과 중 이 종류는 없어요. 다른 종류를 눌러 보세요.`));
+    const okType = r => state.type==="all" || r.t===state.type;
+    const m = ss.matched.filter(okType).length, n = ss.nearby.filter(okType).length;
+    if(!q) msg = "동네 이름(예: 장전동)이나 장소 이름을 입력해 주세요.";
+    else if(!sc.length) msg = state.geoTried===norm(q) ? `‘${q}’에 맞는 곳을 찾지 못했어요. 동 이름이나 장소 이름을 바꿔서 찾아보세요.` : "찾는 중이에요…";
+    else if(!ss.matched.length) msg = `‘${q}’ 이름의 수거함은 없어서, ‘${ss.label}’ 근처 ${NEAR_KM}km 안 ${kind} ${n}곳을 보여드려요.`;
+    else if(ss.nearby.length) msg = `‘${q}’ 검색 결과 ${m}곳, 근처 ${NEAR_KM}km 안 ${kind} ${n}곳`;
+    else msg = m ? `‘${q}’ 검색 결과 ${kind} ${m}곳` : `‘${q}’ 검색 결과 중 이 종류는 없어요. 다른 종류를 눌러 보세요.`;
   }
   $("status").textContent = msg;
   $("filters").hidden = sc.length===0;
-  $("list").innerHTML = list.slice(0,cap).map(item).join("");
+  if(ss && ss.anchor){
+    const okType = r => state.type==="all" || r.t===state.type;
+    const m = ss.matched.filter(okType), n = ss.nearby.filter(okType);
+    $("list").innerHTML = m.map(r=>item(r)).join("") +
+      (n.length ? `<li class="sep">‘${esc(ss.label)}’ 근처 수거함</li>` + n.map(r=>item(r, ss.label)).join("") : "");
+  }else{
+    $("list").innerHTML = list.slice(0,cap).map(r=>item(r)).join("");
+  }
   $("rhint").hidden = !list.slice(0,cap).some(r=>r.t==="R");
   $("more").hidden = !(list.length>cap);
   $("more").textContent = state.mode==="near" ? "지도를 움직이면 더 많은 수거함을 볼 수 있어요." : `처음 ${cap}곳만 목록에 보여요. 나머지는 지도에서 찾아보세요.`;
@@ -327,7 +392,9 @@ $("gu").addEventListener("click",e=>{
   state.gu=+b.dataset.i; state.type="all"; render({fit:true});
   $("filters").scrollIntoView({behavior:smooth(),block:"start"});
 });
-let tm; $("q").addEventListener("input",e=>{ clearTimeout(tm); tm=setTimeout(()=>{ state.q=e.target.value; state.type="all"; render({fit:true}); },300); });
+let tm; $("q").addEventListener("input",e=>{ clearTimeout(tm); tm=setTimeout(()=>{ state.q=e.target.value; state.type="all"; render({fit:true}); placeSearch(state.q); },400); });
+$("filters").addEventListener("scroll",updFade,{passive:true});
+addEventListener("resize",updFade);
 $("filters").addEventListener("click",e=>{ const b=e.target.closest(".chip"); if(!b) return; state.type=b.dataset.t; render({fit:state.mode!=="near"}); });
 $("list").addEventListener("click",e=>{
   const b=e.target.closest("[data-show]"); if(!b||!hasMap) return;
