@@ -53,10 +53,25 @@ h2{font-size:20px;font-weight:700;margin:0 0 12px}
 .search input{width:100%;min-height:52px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);
   font:inherit;font-size:17px;padding:10px 14px}
 .filters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.filters .brk{display:none}
 @media (max-width:640px){
-  .filters{flex-wrap:nowrap;overflow-x:auto;margin-right:-20px;padding:0 20px 2px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .filters::-webkit-scrollbar{display:none}
-  .filters.fade{-webkit-mask-image:linear-gradient(to right,#000 78%,transparent);mask-image:linear-gradient(to right,#000 78%,transparent)}
+  /* 1줄: 전체·약국·아파트·경로당 / 2줄: 주민센터·보건소·기타 장소 — 각 줄을 꽉 채워 길이를 맞춤 */
+  .filters{gap:5px}
+  .filters .chip{flex:1 1 auto;justify-content:center;min-width:0;min-height:36px;gap:4px;padding:2px 7px 2px 3px;font-size:13px}
+  .filters .chip[data-t="all"]{order:1}.filters .chip[data-t="P"]{order:2}.filters .chip[data-t="R"]{order:3}
+  .filters .brk{display:block;order:4;flex-basis:100%;height:0}
+  .filters .chip[data-t="G"]{order:5}.filters .chip[data-t="O"]{order:6}
+  .filters .chip .ico{width:24px;height:24px;font-size:12px;border-width:2px}
+  .filters .chip .n{font-size:11.5px}
+  .filters .chip .n .u{display:none}
+  .filters .chip .lbl{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .filters .chip .ico,.filters .chip .n{flex:none}
+}
+@media (max-width:380px){
+  .filters{gap:4px}
+  .filters .chip{font-size:12.5px;gap:3px;padding:2px 5px 2px 2px}
+  .filters .chip .ico{width:22px;height:22px;font-size:11px}
+  .filters .chip .n{font-size:10.5px}
 }
 .chip{--c:var(--brand);flex:none;display:inline-flex;align-items:center;gap:5px;min-height:40px;border:1.5px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);
   font:inherit;font-size:14px;white-space:nowrap;padding:3px 11px 3px 4px;cursor:pointer}
@@ -136,6 +151,7 @@ footer a{color:inherit}
 .ctl{margin-bottom:14px}
 .maphint{margin:0 0 8px;color:var(--muted);font-size:15px}
 footer .meta{margin-top:12px}
+.me-pin{display:block;width:20px;height:20px;border-radius:50%;background:#1E6FFF;border:3px solid #fff;box-shadow:0 0 0 7px rgba(30,111,255,.28)}
 .gu-pick{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;padding:6px 14px;border:1.5px solid var(--brand);border-radius:12px;
   background:var(--btn-bg);color:var(--ink);font:inherit;font-size:16px;text-align:left;cursor:pointer}
 .gu-pick b{font-weight:700}
@@ -236,7 +252,7 @@ function initMap(){
   map.addControl(new K.ZoomControl(), K.ControlPosition.RIGHT);
   const cs = s => ({width:s+"px",height:s+"px",lineHeight:(s-6)+"px",background:"#0B6B57",color:"#fff",textAlign:"center",fontWeight:"700",
     fontSize:"15px",borderRadius:"50%",border:"3px solid #fff",boxShadow:"0 1px 5px rgba(0,0,0,.4)",boxSizing:"border-box"});
-  clusterer = new K.MarkerClusterer({map,averageCenter:true,minLevel:5,gridSize:56,calculator:[10,100],styles:[cs(36),cs(44),cs(52)]});
+  clusterer = new K.MarkerClusterer({map,averageCenter:true,minLevel:6,gridSize:56,calculator:[10,100],styles:[cs(36),cs(44),cs(52)]});
   overlay = new K.CustomOverlay({yAnchor:1,zIndex:3,clickable:true});
   ROWS.forEach(r=>{
     const el = document.createElement("div"); el.className = "bubw "+r.t;
@@ -259,7 +275,12 @@ function openOv(r){
     `<div class="acts"><a class="btn" href="${kto(r)}" target="_blank" rel="noopener">길찾기</a><a class="btn ghost" href="${kmap(r)}" target="_blank" rel="noopener">카카오맵</a></div>`;
   el.querySelector(".x").addEventListener("click",ev=>{ev.stopPropagation();overlay.setMap(null);});
   const pos=new kakao.maps.LatLng(r.lat,r.lng);
-  overlay.setContent(el); overlay.setPosition(pos); overlay.setMap(map); map.panTo(pos);
+  overlay.setContent(el); overlay.setPosition(pos); overlay.setMap(map);
+  // 말풍선(정보창)이 지도 위쪽에서 잘리지 않도록, 수거함 위치를 지도 아래쪽에 두고 이동
+  const proj=map.getProjection(), H=$("map").clientHeight, p=proj.containerPointFromCoords(pos);
+  const need=(el.offsetHeight||190)+60;            // 정보창 높이 + 말풍선 표식 높이
+  const targetY=Math.min(H-28, Math.max(H/2, need+12));
+  map.panTo(proj.coordsFromContainerPoint(new kakao.maps.Point(p.x, p.y-(targetY-H/2))));
 }
 function showMe(){
   if(!hasMap||!state.me) return;
@@ -269,7 +290,14 @@ function showMe(){
 }
 function fitTo(rows){
   if(!hasMap) return; const K=kakao.maps;
-  if(state.mode==="near"){ if(state.me){ map.setLevel(4); map.setCenter(new K.LatLng(state.me.lat,state.me.lng)); } return; }
+  if(state.mode==="near"){
+    if(!state.me) return;
+    const near5 = rows.slice().sort((a,b)=>km(state.me,a)-km(state.me,b)).slice(0,5);
+    const nb=new K.LatLngBounds(); nb.extend(new K.LatLng(state.me.lat,state.me.lng));
+    near5.forEach(r=>nb.extend(new K.LatLng(r.lat,r.lng))); map.setBounds(nb,50,40,40,40);
+    if(map.getLevel()<3) map.setLevel(3);
+    return;
+  }
   if(!rows.length) return;
   if(rows.length===1){ map.setLevel(5); map.setCenter(new K.LatLng(rows[0].lat,rows[0].lng)); return; }
   const b=new K.LatLngBounds(); rows.forEach(r=>b.extend(new K.LatLng(r.lat,r.lng))); map.setBounds(b,40,40,40,40);
@@ -322,7 +350,8 @@ function updFade(){ const f=$("filters"); f.classList.toggle("fade", f.scrollWid
 function renderFilters(rows){
   const cnt = {all:rows.length,P:0,G:0,O:0,R:0}; rows.forEach(r=>cnt[r.t]++);
   $("filters").innerHTML = TYPES.map(([k,l])=>
-    `<button class="chip" type="button" data-t="${k}" aria-pressed="${state.type===k}"><span class="ico" aria-hidden="true">${k==="all"?"📍":EMO[k]}</span>${l}<span class="n">${cnt[k]}곳</span></button>`).join("");
+    `<button class="chip" type="button" data-t="${k}" aria-pressed="${state.type===k}" aria-label="${l} ${cnt[k]}곳"><span class="ico" aria-hidden="true">${k==="all"?"📍":EMO[k]}</span>`+
+    `<span class="lbl" aria-hidden="true">${l}</span><span class="n" aria-hidden="true">${cnt[k]}<span class="u">곳</span></span></button>`).join("") + '<span class="brk" aria-hidden="true"></span>';
   requestAnimationFrame(updFade);
 }
 function item(r, fromLabel){
