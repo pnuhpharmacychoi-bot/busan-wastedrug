@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>부산 폐의약품 수거함 찾기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;--surface:#F1F6F4;--ink:#13201C;--muted:#56665F;--line:#D3DFDA;
+  --brand:#0B6B57;--brand-ink:#FFFFFF;--brand-weak:#E1F0EA;--signal:#C62F28;--warn-bg:#FFF4E5;--warn-ink:#7A4A00;
+  --pinP:#0B6B57;--pinG:#2457A6;--pinO:#6B7772;--pinR:#C27A00;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1412;--surface:#15201D;--ink:#E6EFEB;--muted:#9BAEA7;--line:#2A3A35;
+    --brand:#47C1A0;--brand-ink:#0D1412;--brand-weak:#173029;--signal:#F2685D;--warn-bg:#2E2414;--warn-ink:#F3C987;
+    --pinP:#47C1A0;--pinG:#7EA6F0;--pinO:#A9B6B1;--pinR:#F0A93A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1412;--surface:#15201D;--ink:#E6EFEB;--muted:#9BAEA7;--line:#2A3A35;
+  --brand:#47C1A0;--brand-ink:#0D1412;--brand-weak:#173029;--signal:#F2685D;--warn-bg:#2E2414;--warn-ink:#F3C987;
+  --pinP:#47C1A0;--pinG:#7EA6F0;--pinO:#A9B6B1;--pinR:#F0A93A;
+  color-scheme:dark;
+}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  font-size:17px;line-height:1.6;-webkit-text-size-adjust:100%}
+.wrap{max-width:640px;margin:0 auto;padding:28px 20px 48px}
+header{margin-bottom:22px}
+.slot{width:72px;height:22px;border-radius:6px;background:var(--signal);position:relative;margin-bottom:18px}
+.slot::after{content:"";position:absolute;left:14px;right:14px;top:9px;height:4px;border-radius:2px;background:var(--bg)}
+h1{font-family:"Black Han Sans","Noto Sans KR",sans-serif;font-weight:400;font-size:clamp(34px,9vw,46px);line-height:1.12;margin:0 0 14px;letter-spacing:-0.5px}
+.lead{margin:0 0 8px;font-size:18px}
+.meta{margin:0;color:var(--muted);font-size:15px}
+h2{font-size:20px;font-weight:700;margin:0 0 12px}
+.near{display:flex;width:100%;align-items:center;justify-content:center;gap:8px;min-height:56px;margin:0 0 22px;border:0;border-radius:12px;
+  background:var(--brand);color:var(--brand-ink);font:inherit;font-size:18px;font-weight:700;cursor:pointer}
+.near svg{width:22px;height:22px;flex:none}
+.gu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px}
+.gu{min-height:52px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;
+  font:inherit;font-size:17px;font-weight:500;cursor:pointer;padding:6px 2px}
+.gu[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink);font-weight:700}
+.search{margin-bottom:16px}
+.search label{display:block;font-weight:700;margin-bottom:6px}
+.search input{width:100%;min-height:52px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);
+  font:inherit;font-size:17px;padding:10px 14px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{--c:var(--brand);display:inline-flex;align-items:center;gap:8px;min-height:48px;border:1.5px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);
+  font:inherit;font-size:16px;padding:5px 14px 5px 6px;cursor:pointer}
+.chip[data-t="P"]{--c:var(--pinP)}.chip[data-t="G"]{--c:var(--pinG)}.chip[data-t="O"]{--c:var(--pinO)}.chip[data-t="R"]{--c:var(--pinR)}
+.chip .ico{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;
+  border:2.5px solid var(--c);background:var(--bg);font-size:17px;line-height:1;flex:none}
+.chip[aria-pressed="true"]{border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c);font-weight:700;background:var(--brand-weak);
+  background:color-mix(in srgb,var(--c) 16%,var(--bg))}
+.chip .n{color:var(--muted);font-weight:400;font-size:15px}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.dot.P{background:var(--pinP)}.dot.G{background:var(--pinG)}.dot.O{background:var(--pinO)}.dot.R{background:var(--pinR)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+#map{height:min(62vh,480px);border-radius:14px;border:1px solid var(--line);background:var(--surface);overflow:hidden}
+.mapbox{position:relative;margin-bottom:14px}
+.mapmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;
+  background:var(--surface);border-radius:14px;color:var(--muted);font-size:16px}
+.ov{position:relative;margin-bottom:16px;background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 14px 14px;
+  min-width:220px;max-width:270px;box-shadow:0 4px 16px rgba(0,0,0,.28);font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:15px;line-height:1.5;white-space:normal}
+.ov::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-8px;border:8px solid transparent;border-bottom:0;border-top-color:var(--bg)}
+.ov b{display:block;font-size:17px;padding-right:28px;word-break:keep-all}
+.ov .pp{color:var(--muted);font-size:14px;margin:2px 0 10px}
+.ov .x{position:absolute;top:6px;right:6px;width:32px;height:32px;border:0;background:transparent;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;border-radius:8px}
+.ov .acts .btn{min-height:40px;padding:6px 14px;font-size:15px}
+#status{font-weight:700;margin:6px 0 10px;min-height:1.6em}
+.hint{background:var(--warn-bg);color:var(--warn-ink);border-radius:10px;padding:10px 14px;font-size:15px;margin:0 0 12px}
+#list{list-style:none;margin:0;padding:0}
+.item{border-top:1px solid var(--line);padding:16px 0}
+.item:last-child{border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.item h3{font-size:18px;font-weight:700;margin:0;line-height:1.4;word-break:keep-all}
+.tag{flex:none;font-size:13px;font-weight:500;border-radius:6px;padding:2px 8px;background:var(--surface);color:var(--muted);white-space:nowrap}
+.tag.P{background:var(--brand-weak);color:var(--brand)}
+.tag.R{background:var(--warn-bg);color:var(--warn-ink)}
+.dist{color:var(--brand);font-weight:700}
+.pos{margin:4px 0 0;font-weight:500}
+.addr{margin:2px 0 10px;color:var(--muted);font-size:15px}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 16px;border-radius:10px;border:0;cursor:pointer;
+  background:var(--brand);color:var(--brand-ink);text-decoration:none;font:inherit;font-weight:700;font-size:16px}
+.btn.ghost{background:transparent;color:var(--brand);border:1.5px solid var(--brand)}
+.more{margin:14px 0 0;color:var(--muted);font-size:15px}
+.guide{margin-top:40px;background:var(--surface);border-radius:14px;padding:20px}
+.rules{margin:0 0 14px;padding:0;list-style:none}
+.rules li{display:grid;grid-template-columns:5.5em 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.rules li:last-child{border-bottom:0}
+.guide p{margin:8px 0 0;font-size:16px}
+footer{margin-top:28px;color:var(--muted);font-size:14px}
+footer p{margin:4px 0}
+@media (max-width:360px){.gu-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="slot" aria-hidden="true"></div>
+  <h1>부산 폐의약품<br>수거함 찾기</h1>
+  <p class="lead">지도의 점을 누르면 수거함 정보가 나와요. 내 위치에서 가까운 곳을 찾거나, 사는 구를 눌러 보세요.</p>
+  <p class="meta">부산광역시 공공데이터 기준 __TOTAL__곳 (__ASOF__ 기준, 매주 자동 갱신)</p>
+</header>
+
+<button class="near" id="near" type="button">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+  내 위치에서 가까운 곳 찾기
+</button>
+
+<section aria-labelledby="gu-h">
+  <h2 id="gu-h">어느 구에 사세요?</h2>
+  <div class="gu-grid" id="gu"></div>
+</section>
+
+<div class="search">
+  <label for="q">동네나 장소 이름으로 찾기</label>
+  <input id="q" type="search" placeholder="예: 장전동, 보건소" autocomplete="off">
+</div>
+
+<h2 id="f-h">어떤 곳에서 버릴까요?</h2>
+<div class="filters" id="filters" role="group" aria-labelledby="f-h"></div>
+<div class="mapbox"><div id="map" role="region" aria-label="수거함 지도"></div><div class="mapmsg" id="mapmsg">지도를 불러오는 중이에요…</div></div>
+<p id="status" aria-live="polite"></p>
+<p class="hint" id="rhint" hidden>🏘️ 아파트·경로당 수거함은 단지나 시설 안(학교 보건실 포함)에 있어서, 그곳 주민이나 이용자만 쓸 수 있을 수 있어요.</p>
+<ul id="list"></ul>
+<p class="more" id="more" hidden></p>
+
+<section class="guide" aria-labelledby="g-h">
+  <h2 id="g-h">버리기 전에 확인하세요</h2>
+  <ul class="rules">
+    <li><b>알약</b><span>포장지를 벗기고 내용물만 모아서</span></li>
+    <li><b>가루약</b><span>포장지를 뜯지 않고 그대로</span></li>
+    <li><b>물약·시럽</b><span>한 병에 모아 새지 않게 마개를 닫아서</span></li>
+    <li><b>안약·연고</b><span>겉 종이상자만 버리고 용기째</span></li>
+  </ul>
+  <p>비타민, 홍삼 같은 건강기능식품은 폐의약품이 아니어서 수거함에 넣지 않아요.</p>
+  <p>약국과 행정복지센터는 문을 연 시간에만 이용할 수 있어요.</p>
+</section>
+
+<footer>
+  <p>자료: 부산광역시 폐의약품 수거함 현황 (공공데이터포털)</p>
+  <p>지도: 카카오맵</p>
+  <p>수거함 위치와 운영 여부는 현장과 다를 수 있으니, 방문 전에 확인하세요.</p>
+</footer>
+</div>
+
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=74326d0a04e16aaf4074d5d0d86b14aa&libraries=clusterer&autoload=false" onerror="window.__kakaoFail=true"></script>
+<script>
+const DATA = __DATA__;
+const GU = DATA.gu, ROWS = DATA.rows.map((r,i)=>({i,gi:r[0],name:r[1],addr:r[2],pos:r[3],lng:r[4],lat:r[5],t:r[6]}));
+const TYPES = [["all","전체"],["P","약국"],["G","주민센터·보건소"],["O","기타 장소"],["R","아파트·경로당"]];
+const EMO = {P:"💊",G:"🏛️",O:"🏢",R:"🏘️"};
+const TAG = {P:"약국",G:"주민센터·보건소",O:"기타 장소",R:"아파트·경로당"};
+let state = {gu:-1, type:"all", q:"", me:null};
+try{ const s = localStorage.getItem("busan-box-gu"); if(s!==null && GU[+s]) state.gu = +s; }catch(e){}
+
+const $ = id => document.getElementById(id);
+const norm = s => s.replace(/\s+/g,"").toLowerCase();
+const esc = s => s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const kname = s => encodeURIComponent(s.replace(/,/g," "));
+const kmap = r => `https://map.kakao.com/link/map/${kname(r.name)},${r.lat},${r.lng}`;
+const kto  = r => `https://map.kakao.com/link/to/${kname(r.name)},${r.lat},${r.lng}`;
+function km(a,b){const R=6371,t=x=>x*Math.PI/180,dLa=t(b.lat-a.lat),dLo=t(b.lng-a.lng);
+  const h=Math.sin(dLa/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
+const fmt = d => d<1 ? `약 ${Math.max(10,Math.round(d*100)*10)}m` : `약 ${d.toFixed(1)}km`;
+
+/* ---- map (Kakao) ---- */
+let map=null, clusterer=null, overlay=null, meMarker=null, hasMap=false; const markers=[];
+const PINC={P:"#0B6B57",G:"#2457A6",O:"#6B7772",R:"#C27A00"};
+const svgPin = c => "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="9" fill="${c}" stroke="#fff" stroke-width="3"/></svg>`);
+function mapFail(){ if(hasMap) return; $("mapmsg").textContent="지도를 불러오지 못했어요. 아래 목록의 ‘지도에서 보기’를 누르면 카카오맵에서 볼 수 있어요."; $("mapmsg").hidden=false; render(); }
+function initMap(){
+  const K = kakao.maps;
+  map = new K.Map($("map"),{center:new K.LatLng(35.17,129.07),level:9});
+  map.addControl(new K.ZoomControl(), K.ControlPosition.RIGHT);
+  const cs = s => ({width:s+"px",height:s+"px",lineHeight:(s-6)+"px",background:"#0B6B57",color:"#fff",textAlign:"center",fontWeight:"700",
+    fontSize:"15px",borderRadius:"50%",border:"3px solid #fff",boxShadow:"0 1px 5px rgba(0,0,0,.4)",boxSizing:"border-box"});
+  clusterer = new K.MarkerClusterer({map,averageCenter:true,minLevel:5,gridSize:56,calculator:[10,100],styles:[cs(36),cs(44),cs(52)]});
+  const imgs={}; Object.keys(PINC).forEach(k=>imgs[k]=new K.MarkerImage(svgPin(PINC[k]),new K.Size(24,24),{offset:new K.Point(12,12)}));
+  overlay = new K.CustomOverlay({yAnchor:1,zIndex:3,clickable:true});
+  ROWS.forEach(r=>{
+    const m = new K.Marker({position:new K.LatLng(r.lat,r.lng),image:imgs[r.t],title:r.name});
+    K.event.addListener(m,"click",()=>openOv(r));
+    markers[r.i]=m;
+  });
+  K.event.addListener(map,"click",()=>overlay.setMap(null));
+  hasMap=true; $("mapmsg").hidden=true;
+  render({fit:state.gu>=0});
+}
+function openOv(r){
+  const el=document.createElement("div"); el.className="ov";
+  const d = state.me ? `<span class="dist">${fmt(km(state.me,r))}</span> ` : "";
+  el.innerHTML=`<button class="x" type="button" aria-label="닫기">×</button><b>${esc(r.name)}</b><div class="pp">${d}${EMO[r.t]} ${TAG[r.t]}${r.pos?` / ${esc(r.pos)}`:""}<br>${esc(r.addr)}</div>`+
+    `<div class="acts"><a class="btn" href="${kto(r)}" target="_blank" rel="noopener">길찾기</a><a class="btn ghost" href="${kmap(r)}" target="_blank" rel="noopener">카카오맵</a></div>`;
+  el.querySelector(".x").addEventListener("click",ev=>{ev.stopPropagation();overlay.setMap(null);});
+  overlay.setContent(el); overlay.setPosition(new kakao.maps.LatLng(r.lat,r.lng)); overlay.setMap(map);
+}
+function showMe(){
+  if(!hasMap||!state.me) return;
+  const K=kakao.maps, pos=new K.LatLng(state.me.lat,state.me.lng);
+  if(!meMarker){ meMarker=new K.CustomOverlay({position:pos,content:'<span class="me-pin"></span>',zIndex:4}); }
+  meMarker.setPosition(pos); meMarker.setMap(map);
+}
+function fitTo(rows,mode){
+  if(!hasMap) return; const K=kakao.maps;
+  if(mode==="me" && state.me){ map.setLevel(4); map.setCenter(new K.LatLng(state.me.lat,state.me.lng)); return; }
+  if(!rows.length) return;
+  const b=new K.LatLngBounds(); rows.forEach(r=>b.extend(new K.LatLng(r.lat,r.lng))); map.setBounds(b,40,40,40,40);
+  if(map.getLevel()<3) map.setLevel(3);
+}
+/* ---- data views ---- */
+function scope(){
+  const q = norm(state.q);
+  return ROWS.filter(r => (state.gu<0 || r.gi===state.gu) && (!q || norm(r.name+r.addr+r.pos+GU[r.gi]).includes(q)));
+}
+function renderGu(){
+  $("gu").innerHTML = GU.map((g,i)=>`<button class="gu" type="button" data-i="${i}" aria-pressed="${state.gu===i}">${g}</button>`).join("");
+}
+function renderFilters(rows){
+  const cnt = {all:rows.length,P:0,G:0,O:0,R:0}; rows.forEach(r=>cnt[r.t]++);
+  $("filters").innerHTML = TYPES.map(([k,l])=>
+    `<button class="chip" type="button" data-t="${k}" aria-pressed="${state.type===k}"><span class="ico" aria-hidden="true">${k==="all"?"📍":EMO[k]}</span>${l}<span class="n">${cnt[k]}곳</span></button>`).join("");
+}
+function item(r){
+  const d = state.me ? `<span class="dist">${fmt(r._d)}</span> ` : "";
+  return `<li class="item"><div class="top"><h3>${esc(r.name)}</h3><span class="tag ${r.t}">${EMO[r.t]} ${TAG[r.t]}</span></div>`+
+    `<p class="pos">${d}${esc(r.pos||"")}</p><p class="addr">${esc(r.addr)}</p>`+
+    `<div class="acts">${hasMap?`<button class="btn" type="button" data-show="${r.i}">지도에서 보기</button>`:`<a class="btn" href="${kmap(r)}" target="_blank" rel="noopener">지도에서 보기</a>`}`+
+    `<a class="btn ghost" href="${kto(r)}" target="_blank" rel="noopener">길찾기</a></div></li>`;
+}
+let lastFitKey="";
+function render(opts={}){
+  renderGu();
+  const sc = scope();
+  renderFilters(sc);
+  let rows = state.type==="all" ? sc : sc.filter(r=>r.t===state.type);
+  if(hasMap){ overlay.setMap(null); clusterer.clear(); clusterer.addMarkers(rows.map(r=>markers[r.i])); }
+  let listRows = rows, LIMIT = 150, note = "";
+  if(state.me){
+    rows.forEach(r=>r._d=km(state.me,r));
+    listRows = rows.slice().sort((a,b)=>a._d-b._d);
+    if(state.gu<0 && !state.q.trim()){ LIMIT = 30; note = "구를 누르면 그 구의 수거함을 모두 볼 수 있어요."; }
+  }
+  const where = state.gu>=0 ? GU[state.gu] : "부산 전체";
+  const kind = state.type==="all" ? "수거함" : TYPES.find(t=>t[0]===state.type)[1];
+  const q = state.q.trim();
+  if(rows.length===0){
+    $("status").textContent = q ? `${where}에서 ‘${q}’에 맞는 곳이 없어요.` + (state.gu>=0 ? " 선택한 구 버튼을 한 번 더 누르면 부산 전체에서 찾아요." : " 다른 이름으로 찾아보세요.")
+                                : `${where}에는 이 종류로 등록된 곳이 없어요. 다른 종류를 눌러 보세요.`;
+  }else if(state.gu<0 && !q && !state.me){
+    $("status").textContent = `부산 전체 ${kind} ${rows.length}곳. 구를 누르거나 내 위치로 찾으면 목록이 나와요.`;
+  }else if(state.me && state.gu<0 && !q){
+    $("status").textContent = `내 위치에서 가까운 ${kind} ${Math.min(rows.length,LIMIT)}곳`;
+  }else{
+    $("status").textContent = (q?`${where}, ‘${q}’ 검색: `:`${where} `) + `${kind} ${rows.length}곳` + (state.me?" (가까운 순)":"");
+  }
+  const showList = state.gu>=0 || q || state.me;
+  const shown = showList ? listRows.slice(0,LIMIT) : [];
+  $("list").innerHTML = shown.map(item).join("");
+  $("rhint").hidden = !rows.some(r=>r.t==="R");
+  $("more").hidden = !(showList && listRows.length>LIMIT);
+  $("more").textContent = note || `처음 ${LIMIT}곳만 보여요. 구를 고르거나 검색어를 더 자세히 넣어 보세요.`;
+  if(opts.fit) fitTo(rows, opts.fit);
+}
+$("gu").addEventListener("click",e=>{
+  const b = e.target.closest(".gu"); if(!b) return;
+  const i = +b.dataset.i; state.gu = state.gu===i ? -1 : i; state.type="all";
+  try{ state.gu<0 ? localStorage.removeItem("busan-box-gu") : localStorage.setItem("busan-box-gu", String(state.gu)); }catch(e){}
+  render({fit:true});
+  $("map").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto":"smooth", block:"start"});
+});
+$("filters").addEventListener("click",e=>{ const b=e.target.closest(".chip"); if(!b) return; state.type=b.dataset.t; render(); });
+let tm; $("q").addEventListener("input",e=>{ clearTimeout(tm); tm=setTimeout(()=>{ state.q=e.target.value; state.type="all"; render({fit:!!e.target.value.trim()}); },250); });
+$("list").addEventListener("click",e=>{
+  const b = e.target.closest("[data-show]"); if(!b||!hasMap) return;
+  const r = ROWS[+b.dataset.show];
+  $("map").scrollIntoView({behavior:"auto",block:"start"});
+  map.setLevel(3); map.setCenter(new kakao.maps.LatLng(r.lat,r.lng)); openOv(r);
+});
+$("near").addEventListener("click",()=>{
+  if(!navigator.geolocation){ $("status").textContent="이 기기에서는 위치를 확인할 수 없어요. 구를 직접 눌러 주세요."; return; }
+  $("status").textContent="위치를 확인하는 중이에요…";
+  navigator.geolocation.getCurrentPosition(p=>{
+    state.me = {lat:p.coords.latitude,lng:p.coords.longitude}; state.gu=-1; state.q=""; $("q").value="";
+    showMe();
+    render({fit:"me"});
+    $("map").scrollIntoView({behavior:"auto",block:"start"});
+  },()=>{
+    $("status").textContent="위치를 가져오지 못했어요. 휴대폰 설정에서 위치 권한을 켜거나, 구를 직접 눌러 주세요.";
+  },{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+});
+render();
+if(window.__kakaoFail || typeof kakao==="undefined"){ mapFail(); }
+else { try{ kakao.maps.load(initMap); }catch(e){ mapFail(); } setTimeout(()=>{ if(!hasMap) mapFail(); },8000); }
+</script>
+</body>
+</html>
