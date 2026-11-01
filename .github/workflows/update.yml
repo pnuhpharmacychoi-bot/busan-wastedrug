@@ -1,0 +1,52 @@
+name: 수거함 데이터 갱신
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"   # 매주 월요일 오전 9시(한국 시간)
+  workflow_dispatch:       # Actions 탭에서 'Run workflow'로 바로 실행
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 저장소 가져오기
+        uses: actions/checkout@v6
+
+      - name: 부산시 API에서 받아 페이지 만들기
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: python3 build.py
+
+      - name: 갱신 기록 저장
+        run: |
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > last-checked.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html last-checked.txt
+          git commit -m "수거함 데이터 자동 갱신" || echo "바뀐 내용 없음"
+          git push
+
+      - name: 공개할 파일 모으기
+        run: mkdir -p _site && cp index.html _site/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: 사이트에 올리기
+        id: deployment
+        uses: actions/deploy-pages@v4
