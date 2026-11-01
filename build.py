@@ -9,8 +9,6 @@ import json, os, re, sys, urllib.parse, urllib.request
 from datetime import datetime, timedelta, timezone
 
 API = "https://apis.data.go.kr/6260000/WasteMedicineBoxService/getWasteMedicineBox"
-GU_ORDER = ["중구","서구","동구","영도구","부산진구","동래구","남구","북구","해운대구",
-            "사하구","금정구","강서구","연제구","수영구","사상구","기장군"]
 MIN_ROWS = 100  # 이보다 적게 오면 뭔가 잘못된 것으로 보고 갱신하지 않음
 
 def fail(msg):
@@ -62,8 +60,9 @@ def main():
         fail("저장소 비밀값 DATA_GO_KR_KEY가 비어 있음")
     key = raw if "%" in raw else urllib.parse.quote(raw, safe="")
     items, total = fetch_all(key)
-    gu = list(GU_ORDER)
     rank = {"P": 0, "G": 1, "O": 2, "R": 3}
+    # 구·군 이름을 가나다순으로 정렬 (새 구가 생겨도 자동으로 제자리에 들어감)
+    gu = sorted({clean(it.get("sggNm")) for it in items if clean(it.get("sggNm"))})
     out = []
     for it in items:
         try:
@@ -75,8 +74,6 @@ def main():
         g = clean(it.get("sggNm"))
         if not g:
             continue
-        if g not in gu:
-            gu.append(g)
         name, addr, pos = clean(it.get("conm")), clean(it.get("dtlAddr")), clean(it.get("pstnCn"))
         out.append([gu.index(g), name, addr, pos, round(lng, 6), round(lat, 6), classify(name, pos)])
     if len(out) < MIN_ROWS:
