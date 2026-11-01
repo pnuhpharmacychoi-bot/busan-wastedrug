@@ -69,9 +69,14 @@ h2{font-size:20px;font-weight:700;margin:0 0 12px}
 button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
 #map{height:min(62vh,480px);border-radius:14px;border:1px solid var(--line);background:var(--surface);overflow:hidden}
 .mapbox{position:relative;margin-bottom:14px}
+.bubw{--c:#0B6B57;display:flex;flex-direction:column;align-items:center;cursor:pointer;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.bubw.P{--c:#0B6B57}.bubw.G{--c:#2457A6}.bubw.O{--c:#6B7772}.bubw.R{--c:#C27A00}
+.bub{display:flex;align-items:center;justify-content:center;width:38px;height:38px;padding:0;border-radius:50%;
+  background:#fff;border:3px solid var(--c);font-size:19px;line-height:1;cursor:pointer}
+.tail{width:0;height:0;margin-top:-2px;border-left:7px solid transparent;border-right:7px solid transparent;border-top:10px solid var(--c)}
 .mapmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;
   background:var(--surface);border-radius:14px;color:var(--muted);font-size:16px}
-.ov{position:relative;margin-bottom:16px;background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 14px 14px;
+.ov{position:relative;margin-bottom:56px;background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 14px 14px;
   min-width:220px;max-width:270px;box-shadow:0 4px 16px rgba(0,0,0,.28);font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   font-size:15px;line-height:1.5;white-space:normal}
 .ov::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-8px;border:8px solid transparent;border-bottom:0;border-top-color:var(--bg)}
@@ -194,12 +199,12 @@ function initMap(){
   const cs = s => ({width:s+"px",height:s+"px",lineHeight:(s-6)+"px",background:"#0B6B57",color:"#fff",textAlign:"center",fontWeight:"700",
     fontSize:"15px",borderRadius:"50%",border:"3px solid #fff",boxShadow:"0 1px 5px rgba(0,0,0,.4)",boxSizing:"border-box"});
   clusterer = new K.MarkerClusterer({map,averageCenter:true,minLevel:5,gridSize:56,calculator:[10,100],styles:[cs(36),cs(44),cs(52)]});
-  const imgs={}; Object.keys(PINC).forEach(k=>imgs[k]=new K.MarkerImage(svgPin(PINC[k]),new K.Size(24,24),{offset:new K.Point(12,12)}));
   overlay = new K.CustomOverlay({yAnchor:1,zIndex:3,clickable:true});
   ROWS.forEach(r=>{
-    const m = new K.Marker({position:new K.LatLng(r.lat,r.lng),image:imgs[r.t],title:r.name});
-    K.event.addListener(m,"click",()=>openOv(r));
-    markers[r.i]=m;
+    const el = document.createElement("div"); el.className = "bubw "+r.t;
+    el.innerHTML = `<button type="button" class="bub" aria-label="${esc(r.name)} (${TAG[r.t]})">${EMO[r.t]}</button><span class="tail"></span>`;
+    el.addEventListener("click", ev => { ev.stopPropagation(); openOv(r); });
+    markers[r.i] = new K.CustomOverlay({position:new K.LatLng(r.lat,r.lng),content:el,xAnchor:0.5,yAnchor:1,clickable:true,zIndex:1});
   });
   K.event.addListener(map,"click",()=>overlay.setMap(null));
   hasMap=true; $("mapmsg").hidden=true;
@@ -211,7 +216,8 @@ function openOv(r){
   el.innerHTML=`<button class="x" type="button" aria-label="닫기">×</button><b>${esc(r.name)}</b><div class="pp">${d}${EMO[r.t]} ${TAG[r.t]}${r.pos?` / ${esc(r.pos)}`:""}<br>${esc(r.addr)}</div>`+
     `<div class="acts"><a class="btn" href="${kto(r)}" target="_blank" rel="noopener">길찾기</a><a class="btn ghost" href="${kmap(r)}" target="_blank" rel="noopener">카카오맵</a></div>`;
   el.querySelector(".x").addEventListener("click",ev=>{ev.stopPropagation();overlay.setMap(null);});
-  overlay.setContent(el); overlay.setPosition(new kakao.maps.LatLng(r.lat,r.lng)); overlay.setMap(map);
+  const pos=new kakao.maps.LatLng(r.lat,r.lng);
+  overlay.setContent(el); overlay.setPosition(pos); overlay.setMap(map); map.panTo(pos);
 }
 function showMe(){
   if(!hasMap||!state.me) return;
